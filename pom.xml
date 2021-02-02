@@ -21,7 +21,7 @@
     <properties>
         <parboiled.java.version>1.8</parboiled.java.version>
         <scala.version>2.13.2</scala.version>
-        <scalatest_2.13.version>3.0.8</scalatest_2.13.version>
+        <scalatest_2.13.version>3.2.3</scalatest_2.13.version>
 
 
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
@@ -29,8 +29,8 @@
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
         <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
-        <testng.version>6.14.3</testng.version>
-        <asm.version>7.1</asm.version>
+        <testng.version>7.3.0</testng.version>
+        <asm.version>9.0</asm.version>
         <scalatest-maven-plugin.version>2.0.2</scalatest-maven-plugin.version>
     </properties>
 
