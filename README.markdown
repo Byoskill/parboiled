@@ -1,3 +1,11 @@
+# Important notes
+
+This projet is a fork from the excellent project Parboiled where the original sources can be found there : https://github.com/sirthias/parboiled
+
+## Release note 
+
+1.3.2 : Maven packaging, bump to ASM 9, minimum compatibility raised to Java 1.8 and ASM 8
+
 # Please see
 
 * <https://repo1.maven.org/maven2/org/parboiled/> for download access to the artifacts
