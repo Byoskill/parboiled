@@ -27,7 +27,7 @@ import static org.parboiled.common.Preconditions.*;
 
 @Test(groups = "primary", enabled = false)
 public class ParserExtensionVerificationTest {
-    
+
     public void verifyTestParserExtension() throws Exception {
         ParserClassNode classNode = ParserTransformer.extendParserClass(TestParser.class);
         verifyIntegrity(classNode.name, classNode.getClassCode());

@@ -1,13 +1,13 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.parboiled</groupId>
+    <groupId>com.byoskill.parboiled</groupId>
     <artifactId>parboiled-parent</artifactId>
     <packaging>pom</packaging>
     <description>
         Elegant parsing in Java and Scala - lightweight, easy-to-use, powerful
     </description>
     <url>http://parboiled.org</url>
-    <version>1.3.2</version>
+    <version>1.3.3</version>
     <licenses>
         <license>
             <name>Apache 2</name>
@@ -190,7 +190,7 @@
     </build>
 
     <organization>
-        <name>org.parboiled</name>
+        <name>com.byoskill.parboiled</name>
         <url>http://parboiled.org</url>
     </organization>
     <scm>
