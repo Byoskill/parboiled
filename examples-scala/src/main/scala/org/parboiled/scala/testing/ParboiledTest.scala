@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package org.parboiled.scala.testing
+package org.parboiled.scala
+package testing
 
 import util.DynamicVariable
 import org.parboiled.support.ParseTreeUtils
