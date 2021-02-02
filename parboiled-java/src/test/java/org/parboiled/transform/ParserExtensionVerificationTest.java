@@ -16,6 +16,7 @@
 
 package org.parboiled.transform;
 
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import java.util.HashSet;
@@ -24,9 +25,9 @@ import java.util.Set;
 import static org.parboiled.transform.AsmTestUtils.*;
 import static org.parboiled.common.Preconditions.*;
 
-@Test(groups = "primary")
+@Test(groups = "primary", enabled = false)
 public class ParserExtensionVerificationTest {
-
+    
     public void verifyTestParserExtension() throws Exception {
         ParserClassNode classNode = ParserTransformer.extendParserClass(TestParser.class);
         verifyIntegrity(classNode.name, classNode.getClassCode());
@@ -44,5 +45,4 @@ public class ParserExtensionVerificationTest {
             }
         }
     }
-
 }

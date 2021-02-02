@@ -21,6 +21,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+import org.parboiled.common.ParboiledException;
 
 import static org.objectweb.asm.Opcodes.*;
 import static org.parboiled.transform.AsmUtils.findLoadedClass;
@@ -83,7 +84,11 @@ abstract class GroupClassGenerator implements RuleMethodProcessor {
         generateConstructor(classWriter);
         generateMethod(group, classWriter);
         classWriter.visitEnd();
-        return classWriter.toByteArray();
+        final byte[] bytes = classWriter.toByteArray();
+        if (bytes == null) {
+            throw new ParboiledException("No bytes have been generated for the group " + group);
+        }
+        return bytes;
     }
 
     private void generateClassBasics(InstructionGroup group, ClassWriter cw) {

@@ -25,6 +25,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 import org.parboiled.common.Base64;
 import org.parboiled.common.StringUtils;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -132,7 +133,7 @@ class InstructionGroupPreparer implements RuleMethodProcessor {
             if (buffer == null) {
                 buffer = ByteBuffer.allocateDirect(4096);
             }
-            buffer.clear();
+            ((Buffer) buffer).clear();
         }
 
         @Override
