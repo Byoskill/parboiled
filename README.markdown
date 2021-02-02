@@ -1,3 +1,6 @@
+[ ![Download](https://api.bintray.com/packages/byoskill/byoskill-parboiled/parboiled/images/download.svg) ](https://bintray.com/byoskill/byoskill-parboiled/parboiled/_latestVersion)
+[![Build Status](https://travis-ci.org/Byoskill/parboiled.svg?branch=master)](https://travis-ci.org/Byoskill/parboiled)
+
 # Important notes
 
 This projet is a fork from the excellent project Parboiled where the original sources can be found there : https://github.com/sirthias/parboiled
