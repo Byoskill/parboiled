@@ -5,7 +5,7 @@ val basicSettings = Seq(
   version               := "1.3.2-SNAPSHOT",
   scalaVersion          := "2.13.4",
   homepage              := Some(new URL("http://parboiled.org")),
-  organization          := "org.parboiled",
+  organization          := "com.byoskill.parboiled",
   organizationHomepage  := Some(new URL("http://parboiled.org")),
   description           := "Elegant parsing in Java and Scala - lightweight, easy-to-use, powerful",
   startYear             := Some(2009),
@@ -50,8 +50,8 @@ val basicSettings = Seq(
   },
   pomExtra :=
     <scm>
-      <url>git@github.com:sirthias/parboiled.git</url>
-      <connection>scm:git:git@github.com:sirthias/parboiled.git</connection>
+      <url>git@github.com:byoskill/parboiled.git</url>
+      <connection>scm:git:git@github.com:byoskill/parboiled.git</connection>
     </scm>
     <developers>
       <developer>
