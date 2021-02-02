@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>org.parboiled</groupId>
-        <version>1.3.1</version>
+        <version>1.3.2</version>
         <artifactId>parboiled-parent</artifactId>
     </parent>
     <licenses>
