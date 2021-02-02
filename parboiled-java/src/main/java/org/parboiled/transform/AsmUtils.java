@@ -31,6 +31,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.parboiled.BaseParser;
 import org.parboiled.ContextAware;
+import org.parboiled.common.ParboiledException;
 import org.parboiled.support.Var;
 
 import java.io.IOException;
@@ -46,10 +47,12 @@ import static org.parboiled.common.Preconditions.checkArgNotNull;
 
 class AsmUtils {
 
+    private static final Map<String, Class<?>> classForDesc = new HashMap<String, Class<?>>();
+
     public static ClassReader createClassReader(Class<?> clazz) throws IOException {
         checkArgNotNull(clazz, "clazz");
-        String classFilename = clazz.getName().replace('.', '/') + ".class";
-        InputStream inputStream = clazz.getClassLoader().getResourceAsStream(classFilename);
+        String      classFilename = clazz.getName().replace('.', '/') + ".class";
+        InputStream inputStream   = clazz.getClassLoader().getResourceAsStream(classFilename);
         if (inputStream == null) {
             inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(classFilename);
         }
@@ -60,8 +63,6 @@ class AsmUtils {
         checkArgNotNull(parserClassName, "parserClassName");
         return parserClassName + "$$parboiled";
     }
-
-    private static final Map<String, Class<?>> classForDesc = new HashMap<String, Class<?>>();
 
     public static synchronized Class<?> getClassForInternalName(String classDesc) {
         checkArgNotNull(classDesc, "classDesc");
@@ -79,7 +80,7 @@ class AsmUtils {
                     try {
                         clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
                     } catch (ClassNotFoundException e2) {
-                        throw new RuntimeException("Error loading class '" + className + "' for rule method analysis", e2);
+                        throw new ParboiledException("Error loading class '" + className + "' for rule method analysis", e2);
                     }
                 }
             }
@@ -117,13 +118,13 @@ class AsmUtils {
             case Type.ARRAY:
                 return getClassForInternalName(type.getInternalName());
         }
-        throw new IllegalStateException(); // should be unreachable
+        throw new ParboiledException("Should be unreachable"); // should be unreachable
     }
 
     public static Field getClassField(String classInternalName, String fieldName) {
         checkArgNotNull(classInternalName, "classInternalName");
         checkArgNotNull(fieldName, "fieldName");
-        Class<?> clazz = getClassForInternalName(classInternalName);
+        Class<?> clazz   = getClassForInternalName(classInternalName);
         Class<?> current = clazz;
         while (true) {
             try {
@@ -131,8 +132,8 @@ class AsmUtils {
             } catch (NoSuchFieldException e) {
                 current = current.getSuperclass();
                 if (Object.class.equals(current)) {
-                    throw new RuntimeException(
-                            "Field '" + fieldName + "' not found in '" + clazz + "\' or any superclass", e);
+                    throw new ParboiledException(
+                            "Field '" + fieldName + "' not found in '" + clazz + "' or any superclass", e);
                 }
             }
         }
@@ -142,16 +143,16 @@ class AsmUtils {
         checkArgNotNull(classInternalName, "classInternalName");
         checkArgNotNull(methodName, "methodName");
         checkArgNotNull(methodDesc, "methodDesc");
-        Class<?> clazz = getClassForInternalName(classInternalName);
-        Type[] types = Type.getArgumentTypes(methodDesc);
+        Class<?>   clazz    = getClassForInternalName(classInternalName);
+        Type[]     types    = Type.getArgumentTypes(methodDesc);
         Class<?>[] argTypes = new Class<?>[types.length];
         for (int i = 0; i < types.length; i++) {
             argTypes[i] = getClassForType(types[i]);
         }
         Method method = findMethod(clazz, methodName, argTypes);
         if (method == null) {
-            throw new RuntimeException("Method '" + methodName + "' with descriptor '" +
-                    methodDesc + "' not found in '" + clazz + "\' or any supertype");
+            throw new ParboiledException("Method '" + methodName + "' with descriptor '" +
+                                                 methodDesc + "' not found in '" + clazz + "' or any supertype");
         }
         return method;
     }
@@ -177,8 +178,8 @@ class AsmUtils {
     public static Constructor getClassConstructor(String classInternalName, String constructorDesc) {
         checkArgNotNull(classInternalName, "classInternalName");
         checkArgNotNull(constructorDesc, "constructorDesc");
-        Class<?> clazz = getClassForInternalName(classInternalName);
-        Type[] types = Type.getArgumentTypes(constructorDesc);
+        Class<?>   clazz    = getClassForInternalName(classInternalName);
+        Type[]     types    = Type.getArgumentTypes(constructorDesc);
         Class<?>[] argTypes = new Class<?>[types.length];
         for (int i = 0; i < types.length; i++) {
             argTypes[i] = getClassForType(types[i]);
@@ -186,8 +187,8 @@ class AsmUtils {
         try {
             return clazz.getDeclaredConstructor(argTypes);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Constructor with descriptor '" + constructorDesc + "' not found in '" +
-                    clazz, e);
+            throw new ParboiledException("Constructor with descriptor '" + constructorDesc + "' not found in '" +
+                                                 clazz, e);
         }
     }
 
@@ -203,8 +204,8 @@ class AsmUtils {
         checkArgNotNull(className, "className");
         checkArgNotNull(classLoader, "classLoader");
         try {
-            Class<?> classLoaderBaseClass = Class.forName("java.lang.ClassLoader");
-            Method findLoadedClassMethod = classLoaderBaseClass.getDeclaredMethod("findLoadedClass", String.class);
+            Class<?> classLoaderBaseClass  = Class.forName("java.lang.ClassLoader");
+            Method   findLoadedClassMethod = classLoaderBaseClass.getDeclaredMethod("findLoadedClass", String.class);
 
             // protected method invocation
             findLoadedClassMethod.setAccessible(true);
@@ -214,8 +215,8 @@ class AsmUtils {
                 findLoadedClassMethod.setAccessible(false);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Could not determine whether class '" + className +
-                    "' has already been loaded", e);
+            throw new ParboiledException("Could not determine whether class '" + className +
+                                                 "' has already been loaded", e);
         }
     }
 
@@ -238,7 +239,7 @@ class AsmUtils {
         try {
             Class<?> classLoaderBaseClass = Class.forName("java.lang.ClassLoader");
             Method defineClassMethod = classLoaderBaseClass.getDeclaredMethod("defineClass",
-                    String.class, byte[].class, int.class, int.class);
+                                                                              String.class, byte[].class, int.class, int.class);
 
             // protected method invocation
             defineClassMethod.setAccessible(true);
@@ -248,14 +249,14 @@ class AsmUtils {
                 defineClassMethod.setAccessible(false);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Could not load class '" + className + '\'', e);
+            throw new ParboiledException("Could not load class '" + className + '\'', e);
         }
     }
 
     public static InsnList createArgumentLoaders(String methodDescriptor) {
         checkArgNotNull(methodDescriptor, "methodDescriptor");
         InsnList instructions = new InsnList();
-        Type[] types = Type.getArgumentTypes(methodDescriptor);
+        Type[]   types        = Type.getArgumentTypes(methodDescriptor);
         for (int i = 0; i < types.length; i++) {
             instructions.add(new VarInsnNode(getLoadingOpcode(types[i]), i + 1));
         }
@@ -281,7 +282,7 @@ class AsmUtils {
             case Type.ARRAY:
                 return Opcodes.ALOAD;
             default:
-                throw new IllegalStateException();
+                throw new ParboiledException("Unsupported arg type");
         }
     }
 
