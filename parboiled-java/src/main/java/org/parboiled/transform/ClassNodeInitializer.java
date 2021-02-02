@@ -22,16 +22,17 @@
 
 package org.parboiled.transform;
 
-import static org.parboiled.common.Preconditions.*;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.MethodNode;
 import org.parboiled.support.Checks;
 
 import java.io.IOException;
+import java.util.function.IntSupplier;
 
+import static org.objectweb.asm.Opcodes.*;
+import static org.parboiled.common.Preconditions.checkArgNotNull;
 import static org.parboiled.transform.AsmUtils.createClassReader;
 import static org.parboiled.transform.AsmUtils.getExtendedParserClassName;
-import static org.objectweb.asm.Opcodes.*;
 
 /**
  * Initializes the basic ParserClassNode fields and collects all methods.
@@ -39,12 +40,21 @@ import static org.objectweb.asm.Opcodes.*;
 class ClassNodeInitializer extends ClassVisitor {
 
     private ParserClassNode classNode;
-    private Class<?> ownerClass;
-    private boolean hasBuildParseTree;
-    private boolean hasExplicitActionOnlyAnnotation;
-    private boolean hasDontLabelAnnotation;
-    private boolean hasSkipActionsInPredicates;
+    private Class<?>        ownerClass;
+    private boolean         hasBuildParseTree;
+    private boolean         hasExplicitActionOnlyAnnotation;
+    private boolean         hasDontLabelAnnotation;
+    private boolean         hasSkipActionsInPredicates;
+    private IntSupplier     classFileVersion = () -> ASMSettings.JDK_VERSION;
 
+    public ClassNodeInitializer(IntSupplier classFileVersion) {
+        this();
+        if (classFileVersion != null) {
+            this.classFileVersion = classFileVersion;
+        }
+    }
+
+    @Deprecated
     public ClassNodeInitializer() {
         super(ASMSettings.ASM_API);
     }
@@ -87,7 +97,7 @@ class ClassNodeInitializer extends ClassVisitor {
             Checks.ensure((access & ACC_PRIVATE) == 0, "Parser class '%s' must not be private", name);
             Checks.ensure((access & ACC_FINAL) == 0, "Parser class '%s' must not be final.", name);
             classNode.visit(
-                    ASMSettings.JDK_VERSION,
+                    classFileVersion.getAsInt(),
                     ACC_PUBLIC,
                     getExtendedParserClassName(name),
                     null,
@@ -95,6 +105,11 @@ class ClassNodeInitializer extends ClassVisitor {
                     null
             );
         }
+    }
+
+    @Override
+    public void visitSource(String source, String debug) {
+        classNode.visitSource(null, null);
     }
 
     @Override
@@ -118,11 +133,6 @@ class ClassNodeInitializer extends ClassVisitor {
 
         // only keep visible annotations on the parser class
         return visible && ownerClass == classNode.getParentClass() ? classNode.visitAnnotation(desc, true) : null;
-    }
-
-    @Override
-    public void visitSource(String source, String debug) {
-        classNode.visitSource(null, null);
     }
 
     @Override
@@ -157,7 +167,7 @@ class ClassNodeInitializer extends ClassVisitor {
         }
 
         RuleMethod method = new RuleMethod(ownerClass, access, name, desc, signature, exceptions,
-                hasExplicitActionOnlyAnnotation, hasDontLabelAnnotation, hasSkipActionsInPredicates);
+                                           hasExplicitActionOnlyAnnotation, hasDontLabelAnnotation, hasSkipActionsInPredicates);
         classNode.getRuleMethods().put(methodKey, method);
         return method; // return the newly created method in order to have it "filled" with the actual method code
     }

@@ -20,13 +20,25 @@ import static org.parboiled.common.Preconditions.*;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+
+import java.util.function.BiConsumer;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
+
 import static org.objectweb.asm.Opcodes.*;
 
 class ActionClassGenerator extends GroupClassGenerator {
 
+    @Deprecated
     public ActionClassGenerator(boolean forceCodeBuilding) {
         super(forceCodeBuilding);
     }
+
+
+    public ActionClassGenerator(boolean forceCodeBuilding, BiConsumer<String, Supplier<byte[]>> classInjector, IntSupplier classFileVersion) {
+                super(forceCodeBuilding, classInjector, classFileVersion);
+    }
+
 
     public boolean appliesTo(ParserClassNode classNode, RuleMethod method) {
         checkArgNotNull(method, "method");

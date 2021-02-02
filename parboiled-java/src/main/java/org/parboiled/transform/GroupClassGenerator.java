@@ -16,27 +16,61 @@
 
 package org.parboiled.transform;
 
-import static org.parboiled.common.Preconditions.*;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import org.parboiled.common.ParboiledException;
 
+import java.util.function.BiConsumer;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
+
 import static org.objectweb.asm.Opcodes.*;
+import static org.parboiled.common.Preconditions.checkArgNotNull;
 import static org.parboiled.transform.AsmUtils.findLoadedClass;
 import static org.parboiled.transform.AsmUtils.loadClass;
 
 abstract class GroupClassGenerator implements RuleMethodProcessor {
 
-    private static final Object lock = new Object();
-
     private final boolean forceCodeBuilding;
-    protected ParserClassNode classNode;
-    protected RuleMethod method;
 
+    protected ParserClassNode                      classNode;
+    protected RuleMethod                           method;
+    private   BiConsumer<String, Supplier<byte[]>> classInjector;
+    private   IntSupplier                          classFileVersion;
+
+    protected GroupClassGenerator(boolean forceCodeBuilding, BiConsumer<String, Supplier<byte[]>> classInjector,
+                                  IntSupplier classFileVersion) {
+        this(forceCodeBuilding);
+        if (classInjector != null) {
+            this.classInjector = classInjector;
+        }
+        if (classFileVersion != null) {
+            this.classFileVersion = classFileVersion;
+        }
+    }
+
+    @Deprecated
     protected GroupClassGenerator(boolean forceCodeBuilding) {
+
         this.forceCodeBuilding = forceCodeBuilding;
+        Object lock = new Object();
+        this.classInjector = (className, groupClassCodeGenerator) -> {
+            ClassLoader classLoader = classNode.getParentClass().getClassLoader();
+            Class<?>    groupClass;
+            synchronized (lock) {
+                groupClass = findLoadedClass(className, classLoader);
+                if (groupClass == null) {
+                    byte[] groupClassCode = groupClassCodeGenerator.get();
+
+                    if (groupClass == null) {
+                        loadClass(className, groupClassCode, classLoader);
+                    }
+                }
+            }
+        };
+        this.classFileVersion = () -> ASMSettings.JDK_VERSION;
     }
 
     public void process(ParserClassNode classNode, RuleMethod method) {
@@ -55,25 +89,27 @@ abstract class GroupClassGenerator implements RuleMethodProcessor {
     private void loadGroupClass(InstructionGroup group) {
         createGroupClassType(group);
         String className = group.getGroupClassType().getClassName();
-        ClassLoader classLoader = classNode.getParentClass().getClassLoader();
+        Supplier<byte[]> groupClassCodeGenerator = () -> {
+            byte[] groupClassCode = group.getGroupClassCode();
+            if (groupClassCode == null) {
+                groupClassCode = generateGroupClassCode(group);
 
-        Class<?> groupClass;
-        synchronized (lock) {
-            groupClass = findLoadedClass(className, classLoader);
-            if (groupClass == null || forceCodeBuilding) {
-                byte[] groupClassCode = generateGroupClassCode(group);
+                if (groupClassCode == null) throw new ParboiledException("No code has been generated for " + group);
                 group.setGroupClassCode(groupClassCode);
-                if (groupClass == null) {
-                    loadClass(className, groupClassCode, classLoader);
-                }
             }
+            return groupClassCode;
+        };
+        classInjector.accept(className, groupClassCodeGenerator);
+        if (forceCodeBuilding) {
+            groupClassCodeGenerator.get();
         }
     }
 
+
     private void createGroupClassType(InstructionGroup group) {
-        String s = classNode.name;
-        int lastSlash = classNode.name.lastIndexOf('/');
-        String groupClassInternalName = (lastSlash >= 0 ? s.substring(0, lastSlash) : s)+ '/' + group.getName();
+        String s                      = classNode.name;
+        int    lastSlash              = classNode.name.lastIndexOf('/');
+        String groupClassInternalName = (lastSlash >= 0 ? s.substring(0, lastSlash) : s) + '/' + group.getName();
         group.setGroupClassType(Type.getObjectType(groupClassInternalName));
     }
 
@@ -92,12 +128,10 @@ abstract class GroupClassGenerator implements RuleMethodProcessor {
     }
 
     private void generateClassBasics(InstructionGroup group, ClassWriter cw) {
-        cw.visit(ASMSettings.JDK_VERSION, ACC_PUBLIC + ACC_FINAL + ACC_SYNTHETIC, group.getGroupClassType().getInternalName(), null,
-                getBaseType().getInternalName(), null);
+        cw.visit(classFileVersion.getAsInt(), ACC_PUBLIC + ACC_FINAL + ACC_SYNTHETIC, group.getGroupClassType().getInternalName(), null,
+                 getBaseType().getInternalName(), null);
         cw.visitSource(classNode.sourceFile, null);
     }
-
-    protected abstract Type getBaseType();
 
     private void generateFields(InstructionGroup group, ClassWriter cw) {
         for (FieldNode field : group.getFields()) {
@@ -120,6 +154,8 @@ abstract class GroupClassGenerator implements RuleMethodProcessor {
 
     protected abstract void generateMethod(InstructionGroup group, ClassWriter cw);
 
+    protected abstract Type getBaseType();
+
     protected void insertSetContextCalls(InstructionGroup group, int localVarIx) {
         InsnList instructions = group.getInstructions();
         for (InstructionGraphNode node : group.getNodes()) {
@@ -141,7 +177,8 @@ abstract class GroupClassGenerator implements RuleMethodProcessor {
                 }
                 instructions.insertBefore(insn, new VarInsnNode(ALOAD, 1));
                 instructions.insertBefore(insn, new MethodInsnNode(INVOKEINTERFACE,
-                        Types.CONTEXT_AWARE.getInternalName(), "setContext", "(" + Types.CONTEXT_DESC + ")V", true));
+                                                                   Types.CONTEXT_AWARE.getInternalName(), "setContext",
+                                                                   "(" + Types.CONTEXT_DESC + ")V", true));
             }
         }
     }
@@ -151,8 +188,8 @@ abstract class GroupClassGenerator implements RuleMethodProcessor {
         for (InstructionGraphNode node : group.getNodes()) {
             if (!node.isXLoad()) continue;
 
-            VarInsnNode insn = (VarInsnNode) node.getInstruction();
-            FieldNode field = group.getFields().get(insn.var);
+            VarInsnNode insn  = (VarInsnNode) node.getInstruction();
+            FieldNode   field = group.getFields().get(insn.var);
 
             // insert the correct GETFIELD after the xLoad
             group.getInstructions().insert(insn, new FieldInsnNode(GETFIELD, owner, field.name, field.desc));

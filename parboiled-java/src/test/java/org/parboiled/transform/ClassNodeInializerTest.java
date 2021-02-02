@@ -33,7 +33,7 @@ public class ClassNodeInializerTest extends TransformationTest {
         setup(TestParser.class);
     }
 
-    @Test(enabled = false)
+    @Test()
     public void testClassNodeSetup() throws Exception {
         assertEquals(classNode.name, "org/parboiled/transform/TestParser$$parboiled");
         assertEquals(classNode.superName, "org/parboiled/transform/TestParser");
@@ -44,44 +44,31 @@ public class ClassNodeInializerTest extends TransformationTest {
             public boolean apply(RuleMethod method) {
                 return method.containsExplicitActions();
             }
-        }), "RuleWithDirectExplicitAction,RuleWithIndirectExplicitAction,RuleWithIndirectExplicitDownAction," +
-                "RuleWithIndirectExplicit2ParamAction,RuleWith2Returns,RuleWithCaptureInAction");
+        }), "RuleWith2Returns,RuleWithComplexActionSetup,RuleWithDirectExplicitAction,RuleWithIndirectExplicitAction");
 
         assertEquals(join(classNode.getRuleMethods().values(), new Predicate<RuleMethod>() {
             public boolean apply(RuleMethod method) {
                 return method.containsImplicitActions();
             }
-        }), "RuleWithDirectImplicitAction,RuleWithIndirectImplicitAction,RuleWithDirectImplicitUpAction," +
-                "RuleWithIndirectExplicitDownAction,RuleWithIndirectImplicitParamAction," +
-                "RuleWithCachedAnd2Params,RuleWithCaptureParameter,RuleWithIllegalImplicitAction," +
-                "RuleWithActionAccessingPrivateField,RuleWithActionAccessingPrivateMethod");
+        }), "NumberRule,RuleWithCachedAnd2Params,RuleWithComplexActionSetup,RuleWithDirectImplicitAction,RuleWithFakeImplicitAction,RuleWithIndirectImplicitAction,RuleWithIndirectImplicitParamAction,RuleWithSwitchAndAction");
 
         assertEquals(join(classNode.getRuleMethods().values(), new Predicate<RuleMethod>() {
             public boolean apply(RuleMethod method) {
                 return method.hasCachedAnnotation();
             }
-        }), "RuleWithoutAction,RuleWithLabel,RuleWithNamedLabel,RuleWithLeaf,RuleWithDirectImplicitAction," +
-                "RuleWithIndirectImplicitAction,RuleWithDirectExplicitAction,RuleWithIndirectExplicitAction," +
-                "RuleWithDirectImplicitUpAction,RuleWithIndirectExplicitDownAction,RuleWithCapture1,RuleWithCapture2," +
-                "RuleWithCachedAnd2Params,RuleWithCaptureInAction,RuleWithActionAccessingPrivateField," +
-                "RuleWithActionAccessingPrivateMethod,Ch,IgnoreCase,CharRange,AnyOf,String,IgnoreCase," +
-                "FirstOf,OneOrMore,Optional,Sequence,Test,TestNot,ZeroOrMore,Eoi,Any,Empty");
+        }), "AnyOf,BugIn0990,Ch,CharRange,FirstOf,IgnoreCase,IgnoreCase,NTimes,NTimes,NumberRule,OneOrMore,Optional,RuleWithCachedAnd2Params,RuleWithDirectExplicitAction,RuleWithDirectImplicitAction,RuleWithIndirectExplicitAction,RuleWithIndirectImplicitAction,RuleWithLeaf,RuleWithNamedLabel,RuleWithoutAction,Sequence,String,Test,TestNot,ZeroOrMore");
 
         assertEquals(join(classNode.getRuleMethods().values(), new Predicate<RuleMethod>() {
             public boolean apply(RuleMethod method) {
                 return method.hasDontLabelAnnotation();
             }
-        }), "RuleWithoutAction,RuleWithLabel,RuleWithNamedLabel,RuleWithLeaf,RuleWithDirectImplicitAction," +
-                "RuleWithIndirectImplicitAction,RuleWithDirectExplicitAction,RuleWithIndirectExplicitAction," +
-                "RuleWithDirectImplicitUpAction,RuleWithIndirectExplicitDownAction,RuleWithCapture1,RuleWithCapture2," +
-                "RuleWithCaptureInAction,RuleWithActionAccessingPrivateField,RuleWithActionAccessingPrivateMethod," +
-                "Eoi,Any,Empty");
+        }), "AnyOf,AnyOf,AnyOf,Ch,CharRange,FirstOf,FirstOf,IgnoreCase,IgnoreCase,IgnoreCase,NTimes,NTimes,NoneOf,NoneOf,OneOrMore,OneOrMore,Optional,Optional,RuleWith2Returns,RuleWithSwitchAndAction,Sequence,Sequence,String,String,Test,Test,TestNot,TestNot,ZeroOrMore,ZeroOrMore");
 
         assertEquals(join(classNode.getRuleMethods().values(), new Predicate<RuleMethod>() {
             public boolean apply(RuleMethod method) {
                 return method.hasSuppressNodeAnnotation();
             }
-        }), "RuleWithLeaf");
+        }), "RuleWithLeaf,Test,TestNot");
     }
 
     private <T extends MethodNode> String join(Collection<T> methods, Predicate<T> predicate) {

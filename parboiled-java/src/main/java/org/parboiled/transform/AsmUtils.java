@@ -200,6 +200,7 @@ class AsmUtils {
      * @param classLoader the class loader to use
      * @return the class instance or null
      */
+    @Deprecated
     public static Class<?> findLoadedClass(String className, ClassLoader classLoader) {
         checkArgNotNull(className, "className");
         checkArgNotNull(classLoader, "classLoader");
@@ -232,6 +233,7 @@ class AsmUtils {
      * @param classLoader the class loader to use
      * @return the class instance
      */
+    @Deprecated
     public static Class<?> loadClass(String className, byte[] code, ClassLoader classLoader) {
         checkArgNotNull(className, "className");
         checkArgNotNull(code, "code");

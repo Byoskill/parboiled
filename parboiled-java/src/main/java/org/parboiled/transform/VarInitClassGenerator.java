@@ -16,17 +16,29 @@
 
 package org.parboiled.transform;
 
-import static org.parboiled.common.Preconditions.*;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-import static org.objectweb.asm.Opcodes.*;
-import static org.parboiled.transform.Types.*;
+
+import java.util.function.BiConsumer;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
+
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ARETURN;
+import static org.parboiled.common.Preconditions.checkArgNotNull;
+import static org.parboiled.transform.Types.BASE_VAR_INIT;
 
 class VarInitClassGenerator extends GroupClassGenerator {
 
+    @Deprecated
     public VarInitClassGenerator(boolean forceCodeBuilding) {
         super(forceCodeBuilding);
+    }
+
+    public VarInitClassGenerator(boolean forceCodeBuilding, BiConsumer<String, Supplier<byte[]>> classInjector,
+                                 IntSupplier classFileVersion) {
+        super(forceCodeBuilding, classInjector, classFileVersion);
     }
 
     public boolean appliesTo(ParserClassNode classNode, RuleMethod method) {
@@ -40,11 +52,6 @@ class VarInitClassGenerator extends GroupClassGenerator {
     }
 
     @Override
-    protected Type getBaseType() {
-        return BASE_VAR_INIT;
-    }
-
-    @Override
     protected void generateMethod(InstructionGroup group, ClassWriter cw) {
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "create", "()Ljava/lang/Object;", null, null);
         convertXLoads(group);
@@ -53,6 +60,11 @@ class VarInitClassGenerator extends GroupClassGenerator {
         mv.visitInsn(ARETURN);
         mv.visitMaxs(0, 0); // trigger automatic computing
         mv.visitEnd();
+    }
+
+    @Override
+    protected Type getBaseType() {
+        return BASE_VAR_INIT;
     }
 
 }

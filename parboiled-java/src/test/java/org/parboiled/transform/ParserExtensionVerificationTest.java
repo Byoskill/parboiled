@@ -16,14 +16,13 @@
 
 package org.parboiled.transform;
 
-import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.parboiled.transform.AsmTestUtils.*;
-import static org.parboiled.common.Preconditions.*;
+import static org.parboiled.common.Preconditions.checkState;
+import static org.parboiled.transform.AsmTestUtils.verifyIntegrity;
 
 @Test(groups = "primary", enabled = false)
 public class ParserExtensionVerificationTest {
@@ -36,7 +35,7 @@ public class ParserExtensionVerificationTest {
         for (RuleMethod method : classNode.getRuleMethods().values()) {
             for (InstructionGroup group : method.getGroups()) {
                 String internalName = group.getGroupClassType().getInternalName();
-                byte[] classCode = group.getGroupClassCode();
+                byte[] classCode    = group.getGroupClassCode();
                 if (!validGroups.contains(internalName)) {
                     checkState(classCode != null);
                     verifyIntegrity(internalName, classCode);
