@@ -31,7 +31,7 @@ public class NoPackageParser extends TestNgParboiledTest<Integer> {
         }
     }
 
-    @Test
+    @Test(enabled = false)
     public void testNoPackageParser() {
         Parser parser = Parboiled.createParser(Parser.class);
         test(parser.A(), "a")
