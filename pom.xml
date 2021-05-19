@@ -225,9 +225,13 @@
 
     <distributionManagement>
         <repository>
-            <id>bintray-byoskill-byoskill-parboiled</id>
-            <name>byoskill-byoskill-parboiled</name>
-            <url>https://api.bintray.com/maven/byoskill/byoskill-parboiled/parboiled/;publish=1</url>
+            <id>byoskill-maven</id>
+            <url>https://sites-web-273920.wl.r.appspot.com/</url>
         </repository>
+
+        <snapshotRepository>
+            <id>byoskill-maven</id>
+            <url>https://sites-web-273920.wl.r.appspot.com/</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>
