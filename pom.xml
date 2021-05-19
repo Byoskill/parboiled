@@ -226,12 +226,12 @@
     <distributionManagement>
         <repository>
             <id>byoskill-maven</id>
-            <url>https://sites-web-273920.wl.r.appspot.com/</url>
+            <url>https://maven.byoskill.tech/</url>
         </repository>
 
         <snapshotRepository>
             <id>byoskill-maven</id>
-            <url>https://sites-web-273920.wl.r.appspot.com/</url>
+            <url>https://maven.byoskill.tech/</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
