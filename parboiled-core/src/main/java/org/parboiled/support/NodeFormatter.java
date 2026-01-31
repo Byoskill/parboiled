@@ -23,7 +23,7 @@ import org.parboiled.common.Formatter;
 import org.parboiled.common.StringUtils;
 
 /**
- * A simple Formatter<Node> that provides String representation for parse tree nodes.
+ * A simple Formatter&lt;Node&gt; that provides String representation for parse tree nodes.
  */
 public class NodeFormatter<V> implements Formatter<Node<V>> {
 

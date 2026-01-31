@@ -22,9 +22,9 @@ import org.parboiled.annotations.BuildParseTree;
 
 /**
  * A parser for the classic non-context free language example { a^n b^n c^n : n >= 1 }
- * S <- &(A c) a+ B !(a|b|c)
- * A <- a A? b
- * B <- b B? c
+ * S &lt;- &amp;(A c) a+ B !(a|b|c)
+ * A &lt;- a A? b
+ * B &lt;- b B? c
  */
 @SuppressWarnings({"InfiniteRecursion"})
 @BuildParseTree

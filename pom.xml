@@ -7,7 +7,7 @@
         Elegant parsing in Java and Scala - lightweight, easy-to-use, powerful
     </description>
     <url>http://parboiled.org</url>
-    <version>1.3.4</version>
+    <version>1.4.1</version>
     <licenses>
         <license>
             <name>Apache 2</name>
@@ -19,19 +19,25 @@
     <inceptionYear>2009</inceptionYear>
 
     <properties>
-        <parboiled.java.version>1.8</parboiled.java.version>
-        <scala.version>2.13.2</scala.version>
-        <scalatest_2.13.version>3.0.8</scalatest_2.13.version>
+        <parboiled.java.version>21</parboiled.java.version>
+        <scala.version>2.13.15</scala.version>
+        <scala.compat.version>2.13</scala.compat.version>
+        <scalatest_2.13.version>3.2.19</scalatest_2.13.version>
 
-
-        <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
-        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
-        <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
-        <testng.version>6.14.3</testng.version>
-        <asm.version>9.0</asm.version>
-        <scalatest-maven-plugin.version>2.0.2</scalatest-maven-plugin.version>
+        <maven-clean-plugin.version>3.4.0</maven-clean-plugin.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-deploy-plugin.version>3.1.3</maven-deploy-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <scala-maven-plugin.version>4.9.2</scala-maven-plugin.version>
+        <testng.version>7.10.2</testng.version>
+        <asm.version>9.7</asm.version>
+        <scalatest-maven-plugin.version>2.2.0</scalatest-maven-plugin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
 
@@ -98,18 +104,23 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>
-
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>${scala-maven-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>${maven-source-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -122,7 +133,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <source>${parboiled.java.version}</source>
+                    <detectJavaApiLink>false</detectJavaApiLink>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -135,7 +150,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <version>${maven-gpg-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -147,9 +162,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <version>2.15.2</version>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>${scala-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -159,6 +174,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
                     <args>
                         <arg>-feature</arg>
                         <arg>-language:implicitConversions</arg>
@@ -166,9 +182,9 @@
                         <arg>-deprecation</arg>
                         <arg>-encoding</arg>
                         <arg>utf8</arg>
+                        <arg>-target:jvm-${parboiled.java.version}</arg>
                     </args>
                 </configuration>
-
             </plugin>
 
             <plugin>
@@ -217,21 +233,32 @@
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.13</artifactId>
+            <artifactId>scalatest_${scala.compat.version}</artifactId>
             <version>${scalatest_2.13.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatestplus</groupId>
+            <artifactId>testng-7-10_${scala.compat.version}</artifactId>
+            <version>3.2.19.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
         </dependency>
     </dependencies>
 
     <distributionManagement>
         <repository>
             <id>byoskill-maven</id>
-            <url>https://maven.byoskill.tech/</url>
+            <url>https://maven.byoskill.com/</url>
         </repository>
 
         <snapshotRepository>
             <id>byoskill-maven</id>
-            <url>https://maven.byoskill.tech/</url>
+            <url>https://maven.byoskill.com/</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
