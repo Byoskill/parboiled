@@ -103,7 +103,7 @@ class JsonParser1 extends Parser {
       if (text.charAt(i) == '\\' && i + 5 < text.length && text.charAt(i + 1) == 'u'
         && isHex(text.charAt(i + 2)) && isHex(text.charAt(i + 3))
         && isHex(text.charAt(i + 4)) && isHex(text.charAt(i + 5))) {
-        sb.append(java.lang.Integer.parseInt(text.substring(i + 2, i + 6), 16).toChar)
+        sb.append(_root_.java.lang.Integer.parseInt(text.substring(i + 2, i + 6), 16).toChar)
         i += 6
       } else {
         sb.append(text.charAt(i))
