@@ -62,16 +62,12 @@ public class ParserTransformer {
     @Deprecated
     static ParserClassNode extendParserClass(Class<?> parserClass) throws Exception {
 
-        ClassInjector classInjector = (ClassInjector.UsingLookup.isAvailable()
-                ? Optional.of(parserClass).<ClassInjector>map(
-                ClassInjector.UsingLookup.of(MethodHandles.lookup())::in)
-                : Optional.<ClassInjector>empty()).orElseGet(() -> {
-            ClassLoader      classLoader      = parserClass.getClassLoader();
-            ProtectionDomain protectionDomain = parserClass.getProtectionDomain();
-            return ClassInjector.UsingUnsafe.isAvailable()
-                    ? new ClassInjector.UsingUnsafe(classLoader, protectionDomain)
-                    : new ClassInjector.UsingReflection(classLoader, protectionDomain);
-        });
+        ClassInjector classInjector;
+        // Use UsingReflection for better Java 21 compatibility
+        // UsingLookup has issues with dynamically generated nested classes
+        ClassLoader      classLoader      = parserClass.getClassLoader();
+        ProtectionDomain protectionDomain = parserClass.getProtectionDomain();
+        classInjector = new ClassInjector.UsingReflection(classLoader, protectionDomain);
         final BiFunction<String, Supplier<byte[]>, Class<?>> defaultGroupClassGeneratorWithBytebuddy = (className, groupClassGenerator) -> {
             return groupClasses.computeIfAbsent(className, key -> {
                 byte[] groupClassCode = groupClassGenerator.get();
