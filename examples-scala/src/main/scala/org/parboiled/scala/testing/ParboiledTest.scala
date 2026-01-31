@@ -21,6 +21,7 @@ import util.DynamicVariable
 import org.parboiled.support.ParseTreeUtils
 import org.parboiled.errors.{ParseError, ErrorUtils}
 import org.parboiled.Node
+import scala.reflect.Selectable.reflectiveSelectable
 
 /**
  * A trait simplifying the creation of tests for "parboiled for scala" parsers.

@@ -18,6 +18,7 @@ package org.parboiled.transform;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import org.parboiled.common.ParboiledException;
@@ -70,7 +71,7 @@ abstract class GroupClassGenerator implements RuleMethodProcessor {
                 }
             }
         };
-        this.classFileVersion = () -> ASMSettings.JDK_VERSION;
+        this.classFileVersion = () -> Opcodes.V1_8;
     }
 
     public void process(ParserClassNode classNode, RuleMethod method) {

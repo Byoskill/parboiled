@@ -20,22 +20,23 @@
 
     <properties>
         <parboiled.java.version>21</parboiled.java.version>
-        <scala.version>2.13.15</scala.version>
-        <scala.compat.version>2.13</scala.compat.version>
-        <scalatest_2.13.version>3.2.19</scalatest_2.13.version>
+        <scala.version>3.3.7</scala.version>
+        <scala.compat.version>3</scala.compat.version>
+        <scalatest.version>3.2.19</scalatest.version>
 
-        <maven-clean-plugin.version>3.4.0</maven-clean-plugin.version>
-        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
-        <maven-deploy-plugin.version>3.1.3</maven-deploy-plugin.version>
-        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
-        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
-        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
-        <scala-maven-plugin.version>4.9.2</scala-maven-plugin.version>
-        <testng.version>7.10.2</testng.version>
-        <asm.version>9.7</asm.version>
+        <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <maven-deploy-plugin.version>3.5.0</maven-deploy-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <maven-resources-plugin.version>3.4.0</maven-resources-plugin.version>
+        <scala-maven-plugin.version>4.9.9</scala-maven-plugin.version>
+        <testng.version>7.12.0</testng.version>
+        <asm.version>9.9.1</asm.version>
+        <byte-buddy.version>1.18.4</byte-buddy.version>
         <scalatest-maven-plugin.version>2.2.0</scalatest-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -152,6 +153,15 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>${maven-gpg-plugin.version}</version>
+                <configuration>
+                    <!-- Use GPG agent for passphrase management -->
+                    <gpgArguments>
+                        <arg>--pinentry-mode</arg>
+                        <arg>loopback</arg>
+                    </gpgArguments>
+                    <!-- Skip signing if GPG is not configured (useful for local builds) -->
+                    <skip>${gpg.skip}</skip>
+                </configuration>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -183,7 +193,7 @@
                         <arg>-deprecation</arg>
                         <arg>-encoding</arg>
                         <arg>utf8</arg>
-                        <arg>-target:jvm-${parboiled.java.version}</arg>
+                        <arg>-Xtarget:${parboiled.java.version}</arg>
                     </args>
                 </configuration>
             </plugin>
@@ -236,7 +246,7 @@
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.compat.version}</artifactId>
-            <version>${scalatest_2.13.version}</version>
+            <version>${scalatest.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -247,7 +257,7 @@
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
+            <artifactId>scala3-library_3</artifactId>
             <version>${scala.version}</version>
         </dependency>
     </dependencies>

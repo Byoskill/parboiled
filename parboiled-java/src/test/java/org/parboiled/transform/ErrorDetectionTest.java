@@ -16,6 +16,7 @@
 
 package org.parboiled.transform;
 
+import org.objectweb.asm.Opcodes;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.common.ImmutableList;
@@ -36,7 +37,7 @@ public class ErrorDetectionTest extends TransformationTest {
             new ImplicitActionsConverter(),
             new InstructionGroupCreator(),
             new InstructionGroupPreparer(),
-            new ActionClassGenerator(true),
+            new ActionClassGenerator(true, null, () -> Opcodes.V1_8),
             new RuleMethodRewriter()
     );
 

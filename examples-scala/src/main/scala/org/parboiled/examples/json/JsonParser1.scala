@@ -47,24 +47,26 @@ class JsonParser1 extends Parser {
   def Json = rule { WhiteSpace ~ (JsonObject | JsonArray) ~ EOI }
 
   def JsonObject: Rule1[ObjectNode] = rule {
-    "{ " ~ zeroOrMore(Pair, separator = ", ") ~ "} " ~~> ObjectNode
+    "{ " ~ zeroOrMore(Pair, separator = ", ") ~ "} " ~~> ((members: List[MemberNode]) => ObjectNode(members))
   }
 
   def Pair = rule {
-    JsonString ~~> (_.text) ~ ": " ~ Value ~~> MemberNode
+    JsonString ~~> (_.text) ~ ": " ~ Value ~~> ((key: String, value: AstNode) => MemberNode(key, value))
   }
 
   def Value: Rule1[AstNode] = rule {
     JsonString | JsonNumber | JsonObject | JsonArray | JsonTrue | JsonFalse | JsonNull
   }
 
-  def JsonString = rule { "\"" ~ zeroOrMore(Character) ~> StringNode ~ "\" " }
+  def JsonString = rule {
+    "\"" ~ zeroOrMore(Character) ~> ((text: String) => StringNode(decodeUnicode(text))) ~ "\" "
+  }
 
   def JsonNumber = rule {
     group(Integer ~ optional(Frac ~ optional(Exp))) ~> (s => NumberNode(BigDecimal(s))) ~ WhiteSpace
   }
 
-  def JsonArray = rule { "[ " ~ zeroOrMore(Value, separator = ", ") ~ "] " ~~> ArrayNode }
+  def JsonArray = rule { "[ " ~ zeroOrMore(Value, separator = ", ") ~ "] " ~~> ((elements: List[AstNode]) => ArrayNode(elements)) }
 
   def Character = rule { EscapedChar | NormalChar }
 
@@ -93,6 +95,26 @@ class JsonParser1 extends Parser {
   def JsonNull = rule { "null " ~ push(Null) }
 
   def WhiteSpace: Rule0 = rule { zeroOrMore(anyOf(" \n\r\t\f")) }
+
+  private def decodeUnicode(text: String): String = {
+    val sb = new StringBuilder(text.length)
+    var i = 0
+    while (i < text.length) {
+      if (text.charAt(i) == '\\' && i + 5 < text.length && text.charAt(i + 1) == 'u'
+        && isHex(text.charAt(i + 2)) && isHex(text.charAt(i + 3))
+        && isHex(text.charAt(i + 4)) && isHex(text.charAt(i + 5))) {
+        sb.append(java.lang.Integer.parseInt(text.substring(i + 2, i + 6), 16).toChar)
+        i += 6
+      } else {
+        sb.append(text.charAt(i))
+        i += 1
+      }
+    }
+    sb.toString
+  }
+
+  private def isHex(ch: Char): Boolean =
+    (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F')
 
   /**
    * We redefine the default string-to-rule conversion to also match trailing whitespace if the string ends with

@@ -21,9 +21,10 @@ import org.scalatestplus.testng.TestNGSuiteLike
 import org.testng.Assert.assertEquals
 import org.parboiled.scala.testing.ParboiledTest
 import org.parboiled.scala.parserunners.ReportingParseRunner
+import org.parboiled.scala.string2Input
 
 class JsonParserTest extends ParboiledTest with TestNGSuiteLike {
-  // def fail(message: String): Nothing = super.fail(message)(null)
+  def fail(msg: String)(implicit pos: org.scalactic.source.Position): Nothing = throw new AssertionError(msg)
 
   val parser = new JsonParser1()
 

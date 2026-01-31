@@ -22,7 +22,7 @@ import org.parboiled.errors.ParseError
 import org.parboiled.support.{ParsingResult => PParsingResult}
 import annotation.unchecked.uncheckedVariance
 import org.parboiled.buffers.InputBuffer
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object ParsingResult {
   def apply[V](result: PParsingResult[V])  = new ParsingResult[V](result)

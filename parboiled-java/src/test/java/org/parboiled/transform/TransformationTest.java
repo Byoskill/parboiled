@@ -16,6 +16,8 @@
 
 package org.parboiled.transform;
 
+import org.objectweb.asm.Opcodes;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -25,7 +27,7 @@ abstract class TransformationTest {
 
     public void setup(Class<?> parserClass) throws IOException {
         classNode = new ParserClassNode(parserClass);
-        new ClassNodeInitializer().process(classNode);
+        new ClassNodeInitializer(() -> Opcodes.V1_8).process(classNode);
     }
 
     public RuleMethod processMethod(String methodName, List<RuleMethodProcessor> methodProcessors) throws Exception {

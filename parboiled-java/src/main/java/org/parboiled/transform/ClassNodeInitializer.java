@@ -45,7 +45,7 @@ class ClassNodeInitializer extends ClassVisitor {
     private boolean         hasExplicitActionOnlyAnnotation;
     private boolean         hasDontLabelAnnotation;
     private boolean         hasSkipActionsInPredicates;
-    private IntSupplier     classFileVersion = () -> ASMSettings.JDK_VERSION;
+    private IntSupplier     classFileVersion = () -> Opcodes.V1_8;
 
     public ClassNodeInitializer(IntSupplier classFileVersion) {
         this();

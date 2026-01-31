@@ -269,17 +269,17 @@ public class ProfilingParseRunner<V> extends AbstractParseRunner<V> implements M
 
         public String printBasics() {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("Runs                     : %,15d\n", totalRuns));
-            sb.append(String.format("Active rules             : %,15d\n", ruleReports.size()));
-            sb.append(String.format("Total net rule time      : %,15.3f s\n", totalNanoTime / 1000000000.0));
-            sb.append(String.format("Total rule invocations   : %,15d\n", totalInvocations));
-            sb.append(String.format("Total rule matches       : %,15d\n", totalMatches));
-            sb.append(String.format("Total rule mismatches    : %,15d\n", totalMismatches));
-            sb.append(String.format("Total match share        : %15.2f %%\n", 100.0 * matchShare));
-            sb.append(String.format("Rule re-invocations      : %,15d\n", reinvocations));
-            sb.append(String.format("Rule re-matches          : %,15d\n", rematches));
-            sb.append(String.format("Rule re-mismatches       : %,15d\n", remismatches));
-            sb.append(String.format("Rule re-invocation share : %15.2f %%\n", 100.0 * reinvocationShare));
+            sb.append(String.format(java.util.Locale.US, "Runs                     : %,15d\n", totalRuns));
+            sb.append(String.format(java.util.Locale.US, "Active rules             : %,15d\n", ruleReports.size()));
+            sb.append(String.format(java.util.Locale.US, "Total net rule time      : %,15.3f s\n", totalNanoTime / 1000000000.0));
+            sb.append(String.format(java.util.Locale.US, "Total rule invocations   : %,15d\n", totalInvocations));
+            sb.append(String.format(java.util.Locale.US, "Total rule matches       : %,15d\n", totalMatches));
+            sb.append(String.format(java.util.Locale.US, "Total rule mismatches    : %,15d\n", totalMismatches));
+            sb.append(String.format(java.util.Locale.US, "Total match share        : %15.2f %%\n", 100.0 * matchShare));
+            sb.append(String.format(java.util.Locale.US, "Rule re-invocations      : %,15d\n", reinvocations));
+            sb.append(String.format(java.util.Locale.US, "Rule re-matches          : %,15d\n", rematches));
+            sb.append(String.format(java.util.Locale.US, "Rule re-mismatches       : %,15d\n", remismatches));
+            sb.append(String.format(java.util.Locale.US, "Rule re-invocation share : %15.2f %%\n", 100.0 * reinvocationShare));
             return sb.toString();
         }
 

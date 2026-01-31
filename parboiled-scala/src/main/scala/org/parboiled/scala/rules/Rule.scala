@@ -136,7 +136,7 @@ object Rule {
 
   private[parboiled] def ok[A](f: A => Any): A => Boolean = {
     f match {
-      case wca: WithContextAction1[A, Any] => new WithContextAction1({ (a, ctx) => wca.action(a, ctx); true })
+      case wca: WithContextAction1[A, Any] @unchecked => new WithContextAction1({ (a, ctx) => wca.action(a, ctx); true })
       case _ => { a => f(a); true }
     }
   }
@@ -193,7 +193,7 @@ object Rule {
   private[parboiled] def exec[Z, R](extract: Context[Any] => Z, f: Z => R) = (context: Context[Any]) => {
     val z = extract(context)
     f match {
-      case a: WithContextAction1[Z, R] => a.action(z, context)
+      case a: WithContextAction1[Z, R] @unchecked => a.action(z, context)
       case _ => f(z)
     }
   }
@@ -201,7 +201,7 @@ object Rule {
   private[parboiled] def exec[Y, Z, R](extract: Context[Any] => (Z, Y), f: (Y, Z) => R) = (context: Context[Any]) => {
     val (z, y) = extract(context)
     f match {
-      case a: WithContextAction2[Y, Z, R] => a.action(y, z, context)
+      case a: WithContextAction2[Y, Z, R] @unchecked => a.action(y, z, context)
       case _ => f(y, z)
     }
   }
@@ -209,7 +209,7 @@ object Rule {
   private[parboiled] def exec[X, Y, Z, R](extract: Context[Any] => (Z, Y, X), f: (X, Y, Z) => R) = (context: Context[Any]) => {
     val (z, y, x) = extract(context)
     f match {
-      case a: WithContextAction3[X, Y, Z, R] => a.action(x, y, z, context)
+      case a: WithContextAction3[X, Y, Z, R] @unchecked => a.action(x, y, z, context)
       case _ => f(x, y, z)
     }
   }
@@ -217,7 +217,7 @@ object Rule {
   private[parboiled] def exec[W, X, Y, Z, R](extract: Context[Any] => (Z, Y, X, W), f: (W, X, Y, Z) => R) = (context: Context[Any]) => {
     val (z, y, x, w) = extract(context)
     f match {
-      case a: WithContextAction4[W, X, Y, Z, R] => a.action(w, x, y, z, context)
+      case a: WithContextAction4[W, X, Y, Z, R] @unchecked => a.action(w, x, y, z, context)
       case _ => f(w, x, y, z)
     }
   }
@@ -225,7 +225,7 @@ object Rule {
   private[parboiled] def exec[V, W, X, Y, Z, R](extract: Context[Any] => (Z, Y, X, W, V), f: (V, W, X, Y, Z) => R) = (context: Context[Any]) => {
     val (z, y, x, w, v) = extract(context)
     f match {
-      case a: WithContextAction5[V, W, X, Y, Z, R] => a.action(v, w, x, y, z, context)
+      case a: WithContextAction5[V, W, X, Y, Z, R] @unchecked => a.action(v, w, x, y, z, context)
       case _ => f(v, w, x, y, z)
     }
   }
@@ -233,7 +233,7 @@ object Rule {
   private[parboiled] def exec[U, V, W, X, Y, Z, R](extract: Context[Any] => (Z, Y, X, W, V, U), f: (U, V, W, X, Y, Z) => R) = (context: Context[Any]) => {
     val (z, y, x, w, v, u) = extract(context)
     f match {
-      case a: WithContextAction6[U, V, W, X, Y, Z, R] => a.action(u, v, w, x, y, z, context)
+      case a: WithContextAction6[U, V, W, X, Y, Z, R] @unchecked => a.action(u, v, w, x, y, z, context)
       case _ => f(u, v, w, x, y, z)
     }
   }
@@ -241,7 +241,7 @@ object Rule {
   private[parboiled] def exec[T, U, V, W, X, Y, Z, R](extract: Context[Any] => (Z, Y, X, W, V, U, T), f: (T, U, V, W, X, Y, Z) => R) = (context: Context[Any]) => {
     val (z, y, x, w, v, u, t) = extract(context)
     f match {
-      case a: WithContextAction7[T, U, V, W, X, Y, Z, R] => a.action(t, u, v, w, x, y, z, context)
+      case a: WithContextAction7[T, U, V, W, X, Y, Z, R] @unchecked => a.action(t, u, v, w, x, y, z, context)
       case _ => f(t, u, v, w, x, y, z)
     }
   }

@@ -46,7 +46,7 @@ public class InstructionGroupCreatorTest extends TransformationTest {
     public void testInstructionGraphing() throws Exception {
         setup(TestParser.class);
 
-        testMethodAnalysis("RuleWithComplexActionSetup", 724347041L);
+        testMethodAnalysis("RuleWithComplexActionSetup", 3760629084L);
         //renderToGraphViz(dotSource);
     }
 

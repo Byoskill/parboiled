@@ -16,6 +16,7 @@
 
 package org.parboiled.transform;
 
+import org.objectweb.asm.Opcodes;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.common.ImmutableList;
@@ -40,8 +41,8 @@ public class VarInitClassGeneratorTest extends TransformationTest {
             new ImplicitActionsConverter(),
             new InstructionGroupCreator(),
             new InstructionGroupPreparer(),
-            new ActionClassGenerator(true),
-            new VarInitClassGenerator(true)
+            new ActionClassGenerator(true, null, () -> Opcodes.V1_8),
+            new VarInitClassGenerator(true, null, () -> Opcodes.V1_8)
     );
 
     static class Parser extends BaseParser<Integer> {

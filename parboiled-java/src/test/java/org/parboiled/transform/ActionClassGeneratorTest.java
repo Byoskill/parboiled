@@ -16,6 +16,7 @@
 
 package org.parboiled.transform;
 
+import org.objectweb.asm.Opcodes;
 import org.parboiled.common.ImmutableList;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -35,8 +36,8 @@ public class ActionClassGeneratorTest extends TransformationTest {
             new ImplicitActionsConverter(),
             new InstructionGroupCreator(),
             new InstructionGroupPreparer(),
-            new ActionClassGenerator(true),
-            new VarInitClassGenerator(true)
+            new ActionClassGenerator(true, null, () -> Opcodes.V1_8),
+            new VarInitClassGenerator(true, null, () -> Opcodes.V1_8)
     );
 
 
