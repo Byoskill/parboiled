@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "https-sonar-dev-zig-01-byoskill-tech-",
+        "projectKey": "Byoskill_parboiled_d7fc7d9c-a40f-4c91-9c52-e9d5580e54e7"
+    }
+}
